@@ -58,18 +58,32 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-
-    // Post with the username (stored in the session)
-    // If same user post different review on same ISBN, modify the existing review
-    // If another user logs in and post a review on same ISBN, add the review as a different review
-    const isbn = req.params.isbn;
+    // Get current user logged in
+    const user = req.session.authorization.username;
+    // Get isbn and review by the logged-in user 
     const review = req.body.review;
+    const isbn = req.params.isbn;
     if (!review){
-        return res.status(200).send("review empty");
+        return res.status(400).send("Review is empty");
     } else {
-        return res.status(200).send("review processing");
+        books[isbn].reviews[user] = review;
+        return res.status(200).send("Review is updated by " + user);
     }
+});
 
+// Delete a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    // Get current user logged in
+    const user = req.session.authorization.username;
+    // Get isbn by the logged in user 
+    const isbn = req.params.isbn;
+    // Delete the review based on logged in user
+    if (!books[isbn]){
+        res.status(400).send("Book with ISBN " + isbn + " not found");
+    } else {
+        delete books[isbn].reviews[user];
+        return res.status(200).send("Review by " + user +  " deleted");
+    }
 });
 
 module.exports.authenticated = regd_users;
