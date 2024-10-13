@@ -65,12 +65,11 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     const review = req.body.review;
     if (!review){
-        return res.status(200).send("Yet to be implemented");
+        return res.status(200).send("review empty");
     } else {
-        
+        return res.status(200).send("review processing");
     }
 
-    return res.status(200).send("Yet to be implemented");
 });
 
 module.exports.authenticated = regd_users;
